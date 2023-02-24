@@ -53,31 +53,6 @@ public class MinHeap {
     }
 
     /**
-     * This method returns the number of nodes that fill the last level
-     * in the hea
-     * 
-     * @return the number of nodes that fill up the last level in the heap
-     */
-    public int leftover_nodes() {
-        //TODO complete
-        if(nodes.length-1 <= 0){
-            return 0;
-        }
-        else{
-            int node_in_level = 1;
-            int sum = 1;
-            for(int i = 1; i < 100; i++){
-                node_in_level = this.d * node_in_level;
-                if(nodes.length-1 <= node_in_level){
-                    int leftover_nodes = nodes.length - sum - 1;
-                    return leftover_nodes;
-                }
-                sum = sum + node_in_level;
-            }
-        }
-        return -1;
-    }
-    /**
      * This method inserts a new element with "id" and "value" into the min-heap
      * 
      * @param id
@@ -94,33 +69,20 @@ public class MinHeap {
         }
         temp[new_length-1] = new_node;
 
-        // Finds out number of full levels in the miniheap
-        // (this is used to find out how many times loop must traverse)
-        MinHeap mh = new MinHeap(new_length, this.d);
-        int levels = mh.full_levels();
-
-        // Loop to swap new node with parent if necessary
-        for (int k = 0; k < levels; k++){
+        // Loop to swap new node with parent if parent value is greater than new node value
+        int index = new_length-1;
+        while(index > 1 && temp[index/d].getValue() > new_node.getValue()){
             // Finds index of new node
-            int index = 1;
             for (int j = 1; j < temp.length; j++){
                 if(temp[j] == new_node){
                     index = j;
                 }
             }
-
-            // If parent value is greater than new node value, swap.
-            // Else, loop is no longer necessary.
-            if(temp[index/d].getValue() > new_node.getValue()){
-                HeapNode temp_node = temp[index/d];
-                temp[index/d] = new_node;
-                temp[index] = temp_node;
+            // Swaps parent with new node
+            HeapNode parent_node = temp[index/d];
+            temp[index/d] = new_node;
+            temp[index] = parent_node;
             }
-            else{
-                break;
-            }
-        }
-        
         // Updates heap array
         nodes = temp;
     }
@@ -149,25 +111,13 @@ public class MinHeap {
             temp[i] = this.nodes[i];
         }
         
-     // Finds out number of full levels in the miniheap
-        // (this is used to find out how many times loop must traverse)
-        MinHeap mh = new MinHeap(new_length, this.d);
-        int levels = mh.full_levels();
-
-        
         // Check if new parent is greater than its children. If it is, swap parent with the child with smaller value.
         // Else, do nothing.
         HeapNode swapped_node = nodes[1];
-        for (int k = 1; k < levels; k++){
-            // Find new index of node
-            int index = 1;
-            for (int j = 1; j < temp.length; j++){
-                if(temp[j] == swapped_node){
-                    index = j;
-                }
-            }
-        }
-        return null;
+        int index = 1;
+        
+        
+        return min;
     }
 
 
