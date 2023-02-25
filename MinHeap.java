@@ -113,10 +113,49 @@ public class MinHeap {
         
         // Check if new parent is greater than its children. If it is, swap parent with the child with smaller value.
         // Else, do nothing.
-        HeapNode swapped_node = nodes[1];
+        HeapNode swapped_node = temp[1];
         int index = 1;
-        
-        
+        while(index < temp.length) {
+         // Finds index of new node
+            for (int i = 1; i < temp.length; i++){
+                if(temp[i] == swapped_node){
+                    index = i;
+                }
+            }
+            
+         // Finds number of children the swapped_node has
+            int children = 0;
+         // If parent has d number of children, this is the index of the dth child
+            int dth_child = (index * d) + 1;
+            if (dth_child < temp.length) {
+                children = d;
+            }
+            else {
+                children = d - ((dth_child) - (temp.length-1));
+            }
+            
+         // If they have no children, this loop terminates.
+            if (children <= 0) {
+                break;
+            }
+            
+         // This loop finds the smallest child.
+            HeapNode min_node = temp[(d*index) - (d-2)];
+            for(int j = 1; j < children; j++) {
+                HeapNode child = temp[(d*index) - (d-2+j)];
+                if (child.getValue() < min_node.getValue()) {
+                    min_node = child;
+                }
+            }
+            
+         // Finally, swap nodes.
+            if (swapped_node.getValue() > min_node.getValue()) {
+                HeapNode temp_node = swapped_node;
+                swapped_node = min_node;
+                min_node = temp_node;
+            }
+        }
+        nodes = temp;
         return min;
     }
 
@@ -129,7 +168,30 @@ public class MinHeap {
      * @param newValue
      */
     public void decreaseKey(int id, int newValue) {
-        // TODO complete
+        int index = -1;
+        for (int i = 1; i <= nodes.length; i++) {
+            if (nodes[i].getId() == id) {
+                index = i;
+            }
+
+        }
+
+        // update new value
+
+        int parent = (index - 1) / d + 1;
+        nodes[index].setValue(newValue);
+        while (index > 1 && nodes[index].getValue() < nodes[parent]
+            .getValue()) {
+
+            HeapNode temp = nodes[index];
+            nodes[index] = nodes[parent];
+            nodes[parent] = temp;
+
+            // updates parent
+
+            index = parent;
+            parent = (index - 1) / d + 1;
+        }
     }
 
 
