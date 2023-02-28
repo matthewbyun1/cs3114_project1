@@ -80,49 +80,47 @@ public class DijkstrasWithoutHeap {
         visited.add(nodes[source-1]);
         // Value of the node being used for distance
         int key = 0;
-        
+        int min = 0;
+        int min_node = 0;
      // Finds the minimum distance from source to each node
-        while(visited.size() < distances.length) {
         
             // Finds nodes directly next to source
             ArrayList<int[]> adjacent_nodes = new ArrayList<int[]>();
             int length = 0;
-            for(int k = 0; k < nodes.length; k++) {
+            while(visited.size() < distances.length) {
+                for(int k = 0; k < nodes.length; k++) {
                 // Checks if node is directly next to source and checks if its been visited yet
-                if((nodes[k][0] == source && (this.visitNode(nodes[k][1]-1))|| (nodes[k][1] == source && (this.visitNode(nodes[k][0]-1))))) {
-                    adjacent_nodes.add(nodes[k]);
-                    visited.add(nodes[k]);
+                    if((nodes[k][0] == source && (this.visitNode(nodes[k][1]-1))|| (nodes[k][1] == source && (this.visitNode(nodes[k][0]-1))))) {
+                        adjacent_nodes.add(nodes[k]);
+                        visited.add(nodes[k]);
                     // This is to keep the source in "u"
-                    if(adjacent_nodes.get(length)[1] == source) {
-                        int temp = adjacent_nodes.get(length)[0];
-                        adjacent_nodes.get(length)[0] = adjacent_nodes.get(length)[1];
-                        adjacent_nodes.get(length)[1] = temp;
-                    }
+                        if(adjacent_nodes.get(length)[1] == source) {
+                            int temp = adjacent_nodes.get(length)[0];
+                            adjacent_nodes.get(length)[0] = adjacent_nodes.get(length)[1];
+                            adjacent_nodes.get(length)[1] = temp;
+                        }
                     
                     // In the first iteration of the algorithm, the distance of nodes directly next to the source
                     // will be the minimum distance
-                    if(key == 0) {
-                        distances[adjacent_nodes.get(length)[1]-1] = adjacent_nodes.get(length)[2];
-                    }
-                    length++;
-                }
-            }
-            // This is to find the minimum distance to get from source to node
-            if (adjacent_nodes.size() > 0) {
-                int min = adjacent_nodes.get(0)[2] + key;
-                int min_node = adjacent_nodes.get(0)[1];
-                for(int j = 0; j < adjacent_nodes.size()-1; j++) {
-                    if(adjacent_nodes.get(j)[2] + key > adjacent_nodes.get(j+1)[2] + key) {
-                        min_node = adjacent_nodes.get(j+1)[1];
-                        min = adjacent_nodes.get(j+1)[2] + key;
+                        if(key == 0) {
+                            distances[adjacent_nodes.get(length)[1]-1] = adjacent_nodes.get(length)[2];
+                        }
+                        length++;
+                    
+                        min = adjacent_nodes.get(0)[2] + key;
+                        min_node = adjacent_nodes.get(0)[1];
+                        if(min > adjacent_nodes.get(length)[2] + key) {
+                            min = adjacent_nodes.get(length)[2] + key;
+                            min_node = adjacent_nodes.get(length)[1];
+                        }
                     }
                 }
-             // Moves loop onto the next node
+                // Moves loop onto the next node
                 source = min_node;
                 distances[min_node-1] = min;
                 key = min;
-            }   
-        }
+            // This is to find the minimum distance to get from source to node
+            }
         // Any value that is still Integer.MAXVALUE in the distance array means that the node is not connected
         for(int d = 0; d < distances.length;d++) {
             if (distances[d] == Integer.MAX_VALUE) {
@@ -131,5 +129,4 @@ public class DijkstrasWithoutHeap {
         }
         return distances;
     }
-
 }
