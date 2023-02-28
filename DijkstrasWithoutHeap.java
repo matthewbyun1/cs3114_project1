@@ -83,7 +83,7 @@ public class DijkstrasWithoutHeap {
             ArrayList<int[]> adjacent_nodes = new ArrayList<int[]>();
             for(int k = 0; k < nodes.length; k++) {
                 // Checks if node is directly next to source and checks if its been visited yet
-                if((nodes[k][0] == source || nodes[k][1] == source) && (this.visitNode(k))) {
+                if((nodes[k][0] == source && (this.visitNode(nodes[k][1]-1))|| (nodes[k][1] == source && (this.visitNode(nodes[k][0]-1))))) {
                     adjacent_nodes.add(nodes[k]);
                     visited.add(nodes[k]);
                     
