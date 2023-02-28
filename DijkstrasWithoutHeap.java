@@ -29,6 +29,7 @@ public class DijkstrasWithoutHeap {
         // TODO complete
         nodes = new int[n][];
         for(int i = 0; i < n; i++) {
+            nodes[i] = edges[i];
             nodes[i][0] = edges[i][0];
             nodes[i][1] = edges[i][1];
             nodes[i][2] = edges[i][2];
