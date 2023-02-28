@@ -27,7 +27,12 @@ public class DijkstrasWithoutHeap {
      */
     public DijkstrasWithoutHeap(int n, int[][] edges) {
         // TODO complete
-        this.nodes = edges;
+        nodes = new int[n][];
+        for(int i = 0; i < n; i++) {
+            nodes[i][0] = edges[i][0];
+            nodes[i][1] = edges[i][1];
+            nodes[i][2] = edges[i][2];
+        }
         
         // Creates visited array
         visited = new ArrayList<int[]>();
@@ -77,7 +82,7 @@ public class DijkstrasWithoutHeap {
         int key = 0;
         
      // Finds the minimum distance from source to each node
-        while(visited.size() < nodes.length) {
+        while(visited.size() < distances.length) {
         
             // Finds nodes directly next to source
             ArrayList<int[]> adjacent_nodes = new ArrayList<int[]>();
