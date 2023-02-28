@@ -86,13 +86,12 @@ public class DijkstrasWithoutHeap {
         
             // Finds nodes directly next to source
             ArrayList<int[]> adjacent_nodes = new ArrayList<int[]>();
-            int length = -1;
+            int length = 0;
             for(int k = 0; k < nodes.length; k++) {
                 // Checks if node is directly next to source and checks if its been visited yet
                 if((nodes[k][0] == source && (this.visitNode(nodes[k][1]-1))|| (nodes[k][1] == source && (this.visitNode(nodes[k][0]-1))))) {
                     adjacent_nodes.add(nodes[k]);
                     visited.add(nodes[k]);
-                    length = length+1;
                     // This is to keep the source in "u"
                     if(adjacent_nodes.get(length)[1] == source) {
                         int temp = adjacent_nodes.get(length)[0];
@@ -105,6 +104,7 @@ public class DijkstrasWithoutHeap {
                     if(key == 0) {
                         distances[adjacent_nodes.get(length)[1]-1] = adjacent_nodes.get(length)[2];
                     }
+                    length++;
                 }
             }
             // This is to find the minimum distance to get from source to node
@@ -119,13 +119,10 @@ public class DijkstrasWithoutHeap {
                 }
              // Moves loop onto the next node
                 source = min_node;
-                min_node = min_node - 1;
-                distances[min_node] = min;
+                distances[min_node-1] = min;
                 key = min;
-            }
-            
+            }   
         }
-        
         // Any value that is still Integer.MAXVALUE in the distance array means that the node is not connected
         for(int d = 0; d < distances.length;d++) {
             if (distances[d] == Integer.MAX_VALUE) {
