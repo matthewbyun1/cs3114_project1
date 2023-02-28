@@ -72,7 +72,7 @@ public class DijkstrasWithoutHeap {
         
         // distance from original source to source will always be 0
         distances[source] = 0;
-        
+        visited.add(nodes[source-1]);
         // Value of the node being used for distance
         int key = 0;
         
@@ -81,23 +81,24 @@ public class DijkstrasWithoutHeap {
         
             // Finds nodes directly next to source
             ArrayList<int[]> adjacent_nodes = new ArrayList<int[]>();
+            int length = -1;
             for(int k = 0; k < nodes.length; k++) {
                 // Checks if node is directly next to source and checks if its been visited yet
                 if((nodes[k][0] == source && (this.visitNode(nodes[k][1]-1))|| (nodes[k][1] == source && (this.visitNode(nodes[k][0]-1))))) {
                     adjacent_nodes.add(nodes[k]);
                     visited.add(nodes[k]);
-                    
+                    length = length+1;
                     // This is to keep the source in "u"
-                    if(adjacent_nodes.get(k)[1] == source) {
-                        int temp = adjacent_nodes.get(k)[0];
-                        adjacent_nodes.get(k)[0] = adjacent_nodes.get(k)[1];
-                        adjacent_nodes.get(k)[1] = temp;
+                    if(adjacent_nodes.get(length)[1] == source) {
+                        int temp = adjacent_nodes.get(length)[0];
+                        adjacent_nodes.get(length)[0] = adjacent_nodes.get(length)[1];
+                        adjacent_nodes.get(length)[1] = temp;
                     }
                     
                     // In the first iteration of the algorithm, the distance of nodes directly next to the source
                     // will be the minimum distance
                     if(key == 0) {
-                        distances[adjacent_nodes.get(k)[1]-1] = adjacent_nodes.get(k)[2];
+                        distances[adjacent_nodes.get(length)[1]-1] = adjacent_nodes.get(length)[2];
                     }
                 }
             }
