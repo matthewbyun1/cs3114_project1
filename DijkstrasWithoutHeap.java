@@ -74,10 +74,9 @@ public class DijkstrasWithoutHeap {
      */
     public int[] run(int source) {
         // source vertex/node
-        source = source - 1;
         
         // distance from original source to source will always be 0
-        distances[source] = 0;
+        distances[source-1] = 0;
         visited.add(nodes[source-1]);
         // Value of the node being used for distance
         int key = 0;
@@ -109,20 +108,22 @@ public class DijkstrasWithoutHeap {
                 }
             }
             // This is to find the minimum distance to get from source to node
-            int min = adjacent_nodes.get(0)[2] + key;
-            int min_node = adjacent_nodes.get(0)[1];
-            for(int j = 0; j < adjacent_nodes.size()-1; j++) {
-                if(adjacent_nodes.get(j)[2] + key > adjacent_nodes.get(j+1)[2] + key) {
-                    min_node = adjacent_nodes.get(j+1)[1];
-                    min = adjacent_nodes.get(j+1)[2] + key;
+            if (adjacent_nodes.size() > 0) {
+                int min = adjacent_nodes.get(0)[2] + key;
+                int min_node = adjacent_nodes.get(0)[1];
+                for(int j = 0; j < adjacent_nodes.size()-1; j++) {
+                    if(adjacent_nodes.get(j)[2] + key > adjacent_nodes.get(j+1)[2] + key) {
+                        min_node = adjacent_nodes.get(j+1)[1];
+                        min = adjacent_nodes.get(j+1)[2] + key;
+                    }
                 }
+             // Moves loop onto the next node
+                source = min_node;
+                min_node = min_node - 1;
+                distances[min_node] = min;
+                key = min;
             }
             
-            // Moves loop onto the next node
-            source = min_node;
-            min_node = min_node - 1;
-            distances[min_node] = min;
-            key = min;
         }
         
         // Any value that is still Integer.MAXVALUE in the distance array means that the node is not connected
