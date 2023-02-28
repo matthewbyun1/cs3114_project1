@@ -3,14 +3,15 @@ package prj1;
 /**
  * In this class, we implement the d-ary min-heap data structure
  * 
- * @author Matthew Byun
+ * @author Enter your names here
  *
  */
 public class MinHeap {
     // The parameter d in the d-ary min-heap
     private int d;
 
-    // The array representation of your min-heap (It is not required to use this)
+    // The array representation of your min-heap (It is not required to use
+    // this)
     private HeapNode[] nodes;
 
     /**
@@ -22,11 +23,39 @@ public class MinHeap {
      *            parameter d in the d-ary min-heap
      */
     public MinHeap(int n, int d) {
-        // TODO complete
         this.d = d;
-        this.nodes = new HeapNode[n+1];
-        this.nodes[0] = new HeapNode(0,0);
+        this.nodes = new HeapNode[n + 1];
+        this.nodes[0] = new HeapNode(-1, -1);
     }
+
+
+    /**
+     * returns the Parent of the node at the location index
+     * 
+     * @param index
+     * @return
+     */
+    public HeapNode getParent(int index) {
+        return nodes[index / 2];
+    }
+
+
+    /**
+     * returns the Child of the node at the location index
+     * 
+     * @param index,
+     *            k
+     *            k = 0: lowest magnitude child;
+     *            k = d-1: highest magnitude child of parent
+     * @return null if k >= d. only d-1 children in the heap.
+     */
+    public HeapNode getChild(int index, int k) {
+        if (k < this.d) {
+            return nodes[(index * 2) + k];
+        }
+        return null;
+    }
+
 
     /**
      * This method returns the number of full levels in the heap.
@@ -34,16 +63,16 @@ public class MinHeap {
      * @return the number of full levels in the heap
      */
     public int full_levels() {
-        //TODO complete
-        if(nodes.length - 1 == 0){
+        // TODO complete
+        if (nodes.length - 1 == 0) {
             return 0;
         }
-        else{
+        else {
             int level = 1;
             int node_in_level = 1;
-            for(int i = 1; i < 100; i++){
+            for (int i = 1; i < 100; i++) {
                 node_in_level = this.d * node_in_level;
-                if(nodes.length-1 <= node_in_level){
+                if (nodes.length - 1 <= node_in_level) {
                     return level;
                 }
                 level = level + 1;
@@ -52,6 +81,37 @@ public class MinHeap {
         return -1;
     }
 
+
+    /**
+     * This method returns the number of nodes that fill the last level
+     * in the heap
+     * 
+     * @return the number of nodes that fill up the last level in the heap
+     */
+    public int leftover_nodes() {
+        // TODO complete
+        if (nodes.length - 1 <= 0) {
+            return 0;
+        }
+
+        else {
+            int node_in_level = 1;
+            int sum = 1;
+            for (int i = 1; i < 100; i++) {
+                node_in_level = this.d * node_in_level;
+                if (nodes.length - 1 <= node_in_level) {
+                    int leftover_nodes = nodes.length - sum - 1;
+                    return leftover_nodes;
+                }
+                sum = sum + node_in_level;
+            }
+        }
+        return -1;
+    }
+
+    
+
+
     /**
      * This method inserts a new element with "id" and "value" into the min-heap
      * 
@@ -59,32 +119,77 @@ public class MinHeap {
      * @param value
      */
     public void insert(int id, int value) {
+            // Creates an array with existing nodes plus new node at the end
+           HeapNode new_node = new HeapNode(id, value);
+           
+            
+           //get size of nodes
+           int size=1;
+           while(nodes[size] != null) {
+               size++;
+           }
+           
+           
+           
+           nodes[size] = new_node;
+           //Create temporary HeapNode 
+           HeapNode[] temp  = new HeapNode[size];
+           int i = 0;
+           while(i < size) {
+               temp[i] = nodes[i+1];
+               i++;
+           }
 
-        // Creates an array with existing nodes plus new node at the end
-        HeapNode new_node = new HeapNode(id, value);
-        int new_length = nodes.length + 1;
-        HeapNode[] temp  = new HeapNode[new_length];
-        for (int i = 0; i < nodes.length; i++){
-            temp[i] = this.nodes[i];
-        }
-        temp[new_length-1] = new_node;
+           
+           
+           /*
+            * int index = size;
+            * 
+            * while(index > 1) {
+            * index = index/d;
+            * }
+            */
+                
+           //parent-child comparison
+           int index = size-1;
+           while(index > 0) {
+               if(temp[(index)/d].getValue() > new_node.getValue()) {
+                   HeapNode tmp = temp[(index)/d];
+                   temp[(index)/d] = temp[(index)];
+                   temp[(index)] = tmp;
+               }
+               else {
+                   break;
+               }
+               index = (index) / d;
+            }
+           
+           
+           //Left to right comparison
+           
 
-        // Loop to swap new node with parent if parent value is greater than new node value
-        int index = new_length-1;
-        while(index > 1 && temp[index/d].getValue() > new_node.getValue()){
-            // Finds index of new node
-            for (int j = 1; j < temp.length; j++){
-                if(temp[j] == new_node){
-                    index = j;
-                }
-            }
-            // Swaps parent with new node
-            HeapNode parent_node = temp[index/d];
-            temp[index/d] = new_node;
-            temp[index] = parent_node;
-            }
-        // Updates heap array
-        nodes = temp;
+           /*
+            * int exp = (int) (Math.log(index) / Math.log(2));
+            * if(index > 1) {
+            * for(int j = 0; j < Math.pow(2, exp); j++) {
+            * if(temp[j].getValue() > temp[size-1].getValue()) {
+            * HeapNode tmp = temp[j];
+            * temp[j] = temp[size-1];
+            * temp[size-1] = tmp;
+            * }
+            * }
+            * }
+            */
+            
+           
+           
+           
+           for(int j = 1; j < size+1; j++) {
+               nodes[j] = temp[j-1];
+           }
+           
+      
+           
     }
 
 
@@ -98,57 +203,60 @@ public class MinHeap {
      *         you should return the array [5, 1]
      */
     public int[] extractMin() {
-        // The minimum value should always be the first element in the heap array
+        // The minimum value should always be the first element in the heap
+        // array
         int[] min = new int[2];
         min[0] = nodes[1].getId();
         min[1] = nodes[1].getValue();
-        
+
         // Swap first and last elements in array, delete the last element
         nodes[1] = nodes[nodes.length - 1];
         int new_length = nodes.length - 1;
-        HeapNode[] temp  = new HeapNode[new_length];
-        for (int i = 0; i < temp.length; i++){
+        HeapNode[] temp = new HeapNode[new_length];
+        for (int i = 0; i < temp.length; i++) {
             temp[i] = this.nodes[i];
         }
-        
-        // Check if new parent is greater than its children. If it is, swap parent with the child with smaller value.
+
+        // Check if new parent is greater than its children. If it is, swap
+        // parent with the child with smaller value.
         // Else, do nothing.
         HeapNode swapped_node = temp[1];
         int index = 1;
-        while(index < temp.length) {
-         // Finds index of new node
-            for (int i = 1; i < temp.length; i++){
-                if(temp[i] == swapped_node){
+        while (index < temp.length) {
+            // Finds index of new node
+            for (int i = 1; i < temp.length; i++) {
+                if (temp[i] == swapped_node) {
                     index = i;
                 }
             }
-            
-         // Finds number of children the swapped_node has
+
+            // Finds number of children the swapped_node has
             int children = 0;
-         // If parent has d number of children, this is the index of the dth child
+            // If parent has d number of children, this is the index of the dth
+            // child
             int dth_child = (index * d) + 1;
             if (dth_child < temp.length) {
                 children = d;
             }
             else {
-                children = d - ((dth_child) - (temp.length-1));
+                children = d - ((dth_child) - (temp.length - 1));
             }
-            
-         // If they have no children, this loop terminates.
+
+            // If they have no children, this loop terminates.
             if (children <= 0) {
                 break;
             }
-            
-         // This loop finds the smallest child.
-            HeapNode min_node = temp[(d*index) - (d-2)];
-            for(int j = 1; j < children; j++) {
-                HeapNode child = temp[(d*index) - (d-2+j)];
+
+            // This loop finds the smallest child.
+            HeapNode min_node = temp[(d * index) - (d - 2)];
+            for (int j = 1; j < children; j++) {
+                HeapNode child = temp[(d * index) - (d - 2 + j)];
                 if (child.getValue() < min_node.getValue()) {
                     min_node = child;
                 }
             }
-            
-         // Finally, swap nodes.
+
+            // Finally, swap nodes.
             if (swapped_node.getValue() > min_node.getValue()) {
                 HeapNode temp_node = swapped_node;
                 swapped_node = min_node;
@@ -203,11 +311,12 @@ public class MinHeap {
     public int[] getHeap() {
         int[] heap = new int[nodes.length];
         heap[0] = Integer.MIN_VALUE;
-        for(int i = 1; i < nodes.length; i++) {
+        for (int i = 1; i < nodes.length; i++) {
             heap[i] = nodes[i].getValue();
         }
         return heap;
     }
+
 
     /**
      * the toString method that returns a string with the values of the heap in
@@ -219,7 +328,7 @@ public class MinHeap {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < this.nodes.length; i++) {
+        for (int i = 1; i < this.nodes.length; i++) {
             if (nodes[i] != null) {
                 sb.append(nodes[i].getValue());
                 sb.append(' ');
@@ -227,5 +336,5 @@ public class MinHeap {
         }
         return sb.toString();
     }
-    
+
 }
