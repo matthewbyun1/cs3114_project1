@@ -14,6 +14,8 @@ public class DijkstrasWithoutHeap {
     private boolean[] visited;
     //stores distance
     private int[] distances;
+    
+    private ArrayList<ArrayList<int[]>> adjLists = new ArrayList<ArrayList<int[]>>();
     /**
      * Constructor of the class
      * 
@@ -27,12 +29,16 @@ public class DijkstrasWithoutHeap {
      */
     public DijkstrasWithoutHeap(int n, int[][] edges) {
         // TODO complete
-        nodes = new int[edges.length][3];
-        for(int i = 0; i < edges.length; i++) {
-            nodes[i] = edges[i];
-            nodes[i][0] = edges[i][0];
-            nodes[i][1] = edges[i][1];
-            nodes[i][2] = edges[i][2];
+        for(int i = 1; i <= n; i++) {
+            adjLists.add(new ArrayList<>());
+        }
+        
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+            adjLists.get(u-1).add(new int[] {v,w});
+            adjLists.get(v-1).add(new int[] {u,w});
         }
         
         // creates distance array and visited array
@@ -44,31 +50,6 @@ public class DijkstrasWithoutHeap {
         }
     }
     
-    /**
-     * This method finds all the neighbors of the node being inspected.
-     * @param v
-     * 
-     * @return returns a list of all neighboring nodes
-     */
-    
-    private ArrayList<int[]> neighbors(int v){
-        ArrayList<int[]> neighbors = new ArrayList<int[]>();
-        int neighbors_length  = -1;
-        for(int i = 0; i < nodes.length; i++) {
-            if(nodes[i][0] == v || nodes[i][1] == v) {
-                neighbors.add(nodes[i]);
-                neighbors_length++;
-                
-                if(nodes[i][1] == v) {
-                    // this is just to keep the code consistent
-                    int temp = neighbors.get(neighbors_length)[1];
-                    neighbors.get(neighbors_length)[1] = neighbors.get(neighbors_length)[0];
-                    neighbors.get(neighbors_length)[0] = temp;
-                }
-            }
-        }
-        return neighbors;
-    }
     /**
      * This method computes and returns the distances of all nodes of the graph
      * from the source node
@@ -85,26 +66,31 @@ public class DijkstrasWithoutHeap {
         distances[source-1] = 0;
         visited[source-1] = true;
         
+        // If the node has no neightbors, the distance will be -1.
+        for(int d = 0; d < distances.length;d++) {
+            if (adjLists.get(d).size() == 0) {
+                distances[d] = -1;
+                visited[d] = true;
+            }
+        }
+        
         // Priority queue with nodes directly next to source node
-        ArrayList<int[]> priority_queue = new ArrayList<int[]>();
-        priority_queue = this.neighbors(source);
-        int u = source;
+        ArrayList<int[]> priority_queue = adjLists.get(source-1);
         
         // loops while priority queue has elements
         while(priority_queue.size() > 0) {
             // finds minimum value and node that produced minimum value
-            int v = priority_queue.get(0)[1];
-            int min_value = priority_queue.get(0)[2];
+            int v = priority_queue.get(0)[0];
+            int min_value = priority_queue.get(0)[1];
             int index = 0;
             for(int i = 1; i < priority_queue.size();i++) {
-                int node_value = priority_queue.get(i)[2];
+                int node_value = priority_queue.get(i)[1];
                 if(min_value > node_value) {
                     min_value = node_value;
-                    v = priority_queue.get(i)[1];
+                    v = priority_queue.get(i)[0];
                     index = i;
                 }
             }
-            
             // removes that edge from the queue
             priority_queue.remove(priority_queue.get(index));
             
@@ -112,24 +98,18 @@ public class DijkstrasWithoutHeap {
             if(visited[v-1] == false) {
                 visited[v-1] = true;
                 distances[v-1] = min_value;
-                ArrayList<int[]> v_neighbors = this.neighbors(v);
+                ArrayList<int[]> v_neighbors = adjLists.get(v-1);
                 for(int i = 0; i < v_neighbors.size(); i++) {
-                    if(visited[v_neighbors.get(i)[1]-1] == false) {
-                        int distance = v_neighbors.get(i)[2];
-                        v_neighbors.get(i)[2] = distances[v-1] + distance;
+                    if(visited[v_neighbors.get(i)[0]-1] == false) {
+                        int distance = v_neighbors.get(i)[1];
+                        v_neighbors.get(i)[1] = distances[v-1] + distance;
                         priority_queue.add(v_neighbors.get(i));
                     }
                 }
             }
-            u = v;
-            
         }
         // Any value that is still Integer.MAXVALUE in the distance array means that the node is not connected
-        for(int d = 0; d < distances.length;d++) {
-            if (distances[d] == Integer.MAX_VALUE) {
-                distances[d] = -1;
-            }
-        }
+        
         return distances;
     }
 }
