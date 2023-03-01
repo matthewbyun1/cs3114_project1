@@ -14,6 +14,7 @@ public class DijkstrasWithoutHeap {
     private ArrayList<int[]> visited;
     //stores distance
     private int[] distances;
+    private ArrayList<int[]> unvisited;
     /**
      * Constructor of the class
      * 
@@ -27,17 +28,17 @@ public class DijkstrasWithoutHeap {
      */
     public DijkstrasWithoutHeap(int n, int[][] edges) {
         // TODO complete
-        nodes = new int[n][];
+        visited = new ArrayList<int[]>();
+        unvisited = new ArrayList<int[]>();
         for(int i = 0; i < n; i++) {
             nodes[i] = edges[i];
             nodes[i][0] = edges[i][0];
             nodes[i][1] = edges[i][1];
             nodes[i][2] = edges[i][2];
+            unvisited.add(nodes[i]);
         }
         
         // Creates visited array
-        visited = new ArrayList<int[]>();
-        
         
         // creates distance array
         distances = new int[n];
@@ -78,6 +79,7 @@ public class DijkstrasWithoutHeap {
         // distance from original source to source will always be 0
         distances[source-1] = 0;
         visited.add(nodes[source-1]);
+        unvisited.remove(nodes[source-1]);
         // Value of the node being used for distance
         int key = 0;
         int min = 0;
@@ -85,42 +87,43 @@ public class DijkstrasWithoutHeap {
      // Finds the minimum distance from source to each node
         
             // Finds nodes directly next to source
+        while(unvisited.size() > 0) {
             ArrayList<int[]> adjacent_nodes = new ArrayList<int[]>();
-            int length = 0;
-            while(visited.size() < distances.length) {
-                for(int k = 0; k < nodes.length; k++) {
+            int length = -1;
+            for(int k = 0; k < nodes.length; k++) {
                 // Checks if node is directly next to source and checks if its been visited yet
-                    if((nodes[k][0] == source && (this.visitNode(nodes[k][1]-1))|| (nodes[k][1] == source && (this.visitNode(nodes[k][0]-1))))) {
-                        adjacent_nodes.add(nodes[k]);
-                        visited.add(nodes[k]);
+                if((nodes[k][0] == source && (this.visitNode(nodes[k][1]-1))|| (nodes[k][1] == source && (this.visitNode(nodes[k][0]-1))))) {
+                    adjacent_nodes.add(nodes[k]);
+                    visited.add(nodes[k]);
+                    unvisited.remove(nodes[k]);
+                    length++;
                     // This is to keep the source in "u"
-                        if(adjacent_nodes.get(length)[1] == source) {
-                            int temp = adjacent_nodes.get(length)[0];
-                            adjacent_nodes.get(length)[0] = adjacent_nodes.get(length)[1];
-                            adjacent_nodes.get(length)[1] = temp;
-                        }
+                    if(adjacent_nodes.get(length)[1] == source) {
+                        int temp = adjacent_nodes.get(length)[0];
+                        adjacent_nodes.get(length)[0] = adjacent_nodes.get(length)[1];
+                        adjacent_nodes.get(length)[1] = temp;
+                    }
                     
                     // In the first iteration of the algorithm, the distance of nodes directly next to the source
                     // will be the minimum distance
-                        if(key == 0) {
-                            distances[adjacent_nodes.get(length)[1]-1] = adjacent_nodes.get(length)[2];
-                        }
-                        length++;
+                    if(key == 0) {
+                        distances[adjacent_nodes.get(length)[1]-1] = adjacent_nodes.get(length)[2];
+                    }
                     
-                        min = adjacent_nodes.get(0)[2] + key;
-                        min_node = adjacent_nodes.get(0)[1];
-                        if(min > adjacent_nodes.get(length)[2] + key) {
-                            min = adjacent_nodes.get(length)[2] + key;
-                            min_node = adjacent_nodes.get(length)[1];
-                        }
+                    min = adjacent_nodes.get(0)[2] + key;
+                    min_node = adjacent_nodes.get(0)[1];
+                    if(min > adjacent_nodes.get(length)[2] + key && length>0) {
+                        min = adjacent_nodes.get(length)[2] + key;
+                        min_node = adjacent_nodes.get(length)[1];
                     }
                 }
-                // Moves loop onto the next node
-                source = min_node;
-                distances[min_node-1] = min;
-                key = min;
-            // This is to find the minimum distance to get from source to node
             }
+                // Moves loop onto the next node
+            source = min_node;
+            distances[min_node-1] = min;
+            key = min;
+            // This is to find the minimum distance to get from source to node
+        }
         // Any value that is still Integer.MAXVALUE in the distance array means that the node is not connected
         for(int d = 0; d < distances.length;d++) {
             if (distances[d] == Integer.MAX_VALUE) {
