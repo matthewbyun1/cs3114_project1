@@ -53,19 +53,18 @@ public class DijkstrasWithoutHeap {
     
     private ArrayList<int[]> neighbors(int v){
         ArrayList<int[]> neighbors = new ArrayList<int[]>();
-        int neighbors_length  = 0;
+        int neighbors_length  = -1;
         for(int i = 0; i < nodes.length; i++) {
-            if(nodes[i][0] == v) {
+            if(nodes[i][0] == v || nodes[i][1] == v) {
                 neighbors.add(nodes[i]);
                 neighbors_length++;
-            }
-            else if(nodes[i][1] == v) {
-                neighbors.add(nodes[i]);
-                neighbors_length++;
-                // this is just to keep the code consistent
-                int temp = neighbors.get(neighbors_length)[1];
-                neighbors.get(neighbors_length)[1] = neighbors.get(neighbors_length)[0];
-                neighbors.get(neighbors_length)[0] = temp;
+                
+                if(nodes[i][1] == v) {
+                    // this is just to keep the code consistent
+                    int temp = neighbors.get(neighbors_length)[1];
+                    neighbors.get(neighbors_length)[1] = neighbors.get(neighbors_length)[0];
+                    neighbors.get(neighbors_length)[0] = temp;
+                }
             }
         }
         return neighbors;
@@ -104,6 +103,9 @@ public class DijkstrasWithoutHeap {
                     v = priority_queue.get(i)[1];
                     index = i;
                 }
+                else {
+                    index++;
+                }
             }
             
             // removes that edge from the queue
@@ -112,7 +114,7 @@ public class DijkstrasWithoutHeap {
             // runs if minimum node has not been visited
             if(visited[v-1] == false) {
                 visited[v-1] = true;
-                distances[v-1] = distances[u-1] + min_value;
+                distances[v-1] = min_value;
                 ArrayList<int[]> v_neighbors = this.neighbors(v);
                 for(int i = 0; i < v_neighbors.size(); i++) {
                     if(visited[v_neighbors.get(i)[1]-1] == false) {
