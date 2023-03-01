@@ -8,13 +8,12 @@ import java.util.ArrayList;
  * @version 1.1
  */
 public class DijkstrasWithoutHeap {
-    //stores edges
-    private int[][] nodes;
     //stores all the node's statuses
     private boolean[] visited;
     //stores distance
     private int[] distances;
     
+    // stores adjacent nodes
     private ArrayList<ArrayList<int[]>> adjLists = new ArrayList<ArrayList<int[]>>();
     /**
      * Constructor of the class
@@ -28,11 +27,12 @@ public class DijkstrasWithoutHeap {
      *            end-points of the i-th edge and edges[i][2] is its weight
      */
     public DijkstrasWithoutHeap(int n, int[][] edges) {
-        // TODO complete
-        for(int i = 1; i <= n; i++) {
+        // creates adjacency list
+        for(int i = 0; i < n; i++) {
             adjLists.add(new ArrayList<>());
         }
         
+        //  finds the neighbors to each node, and the weight, and adds that to adjacency list
         for(int[] edge : edges) {
             int u = edge[0];
             int v = edge[1];
@@ -79,10 +79,12 @@ public class DijkstrasWithoutHeap {
         
         // loops while priority queue has elements
         while(priority_queue.size() > 0) {
+            
             // finds minimum value and node that produced minimum value
             int v = priority_queue.get(0)[0];
             int min_value = priority_queue.get(0)[1];
             int index = 0;
+            // loop that finds the min value and min node
             for(int i = 1; i < priority_queue.size();i++) {
                 int node_value = priority_queue.get(i)[1];
                 if(min_value > node_value) {
@@ -96,10 +98,15 @@ public class DijkstrasWithoutHeap {
             
             // runs if minimum node has not been visited
             if(visited[v-1] == false) {
+                // minimum node has now been visited
                 visited[v-1] = true;
+                // distance of node is set
                 distances[v-1] = min_value;
+                // finds neighbors of v
                 ArrayList<int[]> v_neighbors = adjLists.get(v-1);
                 for(int i = 0; i < v_neighbors.size(); i++) {
+                    // if the neighbors have not been visited, add the edge to priority_queue
+                    // and set the new weight of the edge
                     if(visited[v_neighbors.get(i)[0]-1] == false) {
                         int distance = v_neighbors.get(i)[1];
                         v_neighbors.get(i)[1] = distances[v-1] + distance;
@@ -108,8 +115,7 @@ public class DijkstrasWithoutHeap {
                 }
             }
         }
-        // Any value that is still Integer.MAXVALUE in the distance array means that the node is not connected
-        
+        // return distance array
         return distances;
     }
 }
