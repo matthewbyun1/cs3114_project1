@@ -53,17 +53,19 @@ public class DijkstrasWithoutHeap {
     
     private ArrayList<int[]> neighbors(int v){
         ArrayList<int[]> neighbors = new ArrayList<int[]>();
+        int neighbors_length  = 0;
         for(int i = 0; i < nodes.length; i++) {
             if(nodes[i][0] == v) {
                 neighbors.add(nodes[i]);
+                neighbors_length++;
             }
             else if(nodes[i][1] == v) {
                 neighbors.add(nodes[i]);
-                
+                neighbors_length++;
                 // this is just to keep the code consistent
-                int temp = neighbors.get(i)[1];
-                neighbors.get(i)[1] = neighbors.get(i)[0];
-                neighbors.get(i)[0] = temp;
+                int temp = neighbors.get(neighbors_length)[1];
+                neighbors.get(neighbors_length)[1] = neighbors.get(neighbors_length)[0];
+                neighbors.get(neighbors_length)[0] = temp;
             }
         }
         return neighbors;
