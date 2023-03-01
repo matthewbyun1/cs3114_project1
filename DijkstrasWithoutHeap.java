@@ -103,9 +103,6 @@ public class DijkstrasWithoutHeap {
                     v = priority_queue.get(i)[1];
                     index = i;
                 }
-                else {
-                    index++;
-                }
             }
             
             // removes that edge from the queue
